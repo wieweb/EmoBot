@@ -42,7 +42,8 @@ The current work is focused on the head module:
 
 - Render expressive faces on the LCD
 - Build non-blocking idle animations
-- Start with subtle eye behavior such as blinking
+- Use subtle eye behavior such as blinking, gaze shifts, and side glances
+- Add small mouth and expression variations that support the current face instead of overpowering it
 - Prepare for future servo control and command handling
 
 ## Code Rules
@@ -66,6 +67,8 @@ The current work is focused on the head module:
 - Avoid full-screen redraws for small face changes when a local redraw is sufficient.
 - Use non-blocking timing based on `millis()` for animations and state changes.
 - Preserve facial readability during animation; blinking should not disturb the mouth or other unaffected regions.
+- Side looks should feel intentional: eyes may shift together, eye spacing may tighten slightly, and the mouth may simplify a bit during the look.
+- Shared render state should drive transient expression changes such as gaze offset, blink stage, and mouth adjustment.
 
 ## Development Rules
 

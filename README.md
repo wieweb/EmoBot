@@ -10,7 +10,7 @@ The current implementation focus is the `RoboHead` module:
 - ST7789 display output
 - reusable face drawing primitives
 - multiple face expressions
-- a non-blocking idle blink animation
+- a non-blocking idle animation system
 
 ## Current Status
 
@@ -21,7 +21,12 @@ The head firmware already supports:
 - larger face geometry that uses the display area more effectively
 - vertical pill-shaped eyes for open-eye expressions
 - idle blinking using randomized non-blocking timing
-- partial redraws of the eye area during blinking to reduce visible flicker
+- multi-step blink variants including asymmetric and longer blinks
+- subtle eye drift and occasional side glances
+- narrower eye spacing and a slightly narrower mouth during stronger side looks
+- mood-driven idle behavior with calm, curious, sleepy, and cheerful variations
+- small mouth motion and micro-expression changes during idle
+- partial redraws of the eye and mouth regions to reduce visible flicker
 
 ## Architecture
 
@@ -72,9 +77,10 @@ The current `Code/RoboHead` structure is intentionally modular:
 - `display.*`: display initialization and access
 - `buttons.*`: button input and press handling
 - `face_common.*`: shared face drawing primitives
+- `face_state.*`: shared render state for eye offsets, blink levels, and mouth adjustments
 - `face_*.{h,cpp}`: individual face definitions
 - `face_gallery.*`: face selection and dispatch
-- `idle_animation.*`: non-blocking idle behavior such as blinking
+- `idle_animation.*`: non-blocking idle behavior such as blinking, gaze movement, and mood-based micro-animation
 
 ## Hardware Notes
 
@@ -89,6 +95,7 @@ The current `Code/RoboHead` structure is intentionally modular:
 - Prefer small, isolated modules
 - Use non-blocking timing with `millis()` for animation behavior
 - Avoid full-screen redraws for small visual updates when a local redraw is enough
+- Keep expressive behavior centralized in shared state and idle coordination code instead of duplicating animation logic per face
 - Extend the current structure instead of adding monolithic logic
 
 ## Roadmap

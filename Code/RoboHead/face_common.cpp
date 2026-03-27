@@ -8,6 +8,10 @@ constexpr int kEyeAreaX = 18;
 constexpr int kEyeAreaY = 24;
 constexpr int kEyeAreaWidth = 244;
 constexpr int kEyeAreaHeight = 112;
+constexpr int kMouthAreaX = 38;
+constexpr int kMouthAreaY = 138;
+constexpr int kMouthAreaWidth = 204;
+constexpr int kMouthAreaHeight = 84;
 
 void fillVerticalPillGlow(int x, int y, int width, int height, uint16_t color) {
   Adafruit_ST7789& tft = Display::tft();
@@ -36,10 +40,29 @@ void clearEyeArea() {
   tft.fillRect(kEyeAreaX, kEyeAreaY, kEyeAreaWidth, kEyeAreaHeight, Colors::Black);
 }
 
+void clearMouthArea() {
+  Adafruit_ST7789& tft = Display::tft();
+  tft.fillRect(kMouthAreaX, kMouthAreaY, kMouthAreaWidth, kMouthAreaHeight, Colors::Black);
+}
+
 void drawDotEye(int x, int y, int radius, uint16_t color) {
   const int width = max(16, radius + 10);
   const int height = max(40, (radius * 4) - 2);
   fillVerticalPillGlow(x, y, width, height, color);
+}
+
+void drawBlinkablePillEye(int x, int y, int radius, uint16_t color, uint8_t blinkLevel) {
+  if (blinkLevel == 0) {
+    drawDotEye(x, y, radius, color);
+    return;
+  }
+
+  if (blinkLevel == 1) {
+    drawEyeBar(x, y + 8, radius + 18, 16, color);
+    return;
+  }
+
+  drawEyeBar(x, y + 12, radius + 24, 8, color);
 }
 
 void drawEyeBar(int x, int y, int width, int height, uint16_t color) {

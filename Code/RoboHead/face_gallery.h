@@ -10,6 +10,7 @@ void next();
 void previous();
 void drawCurrent();
 void drawEyesCurrent();
+void drawMouthCurrent();
 void drawBlinkCurrent();
 const char* currentName();
 uint8_t currentIndex();

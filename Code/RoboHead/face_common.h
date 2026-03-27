@@ -12,7 +12,9 @@ constexpr int kMouthY = 182;
 
 void clearCanvas();
 void clearEyeArea();
+void clearMouthArea();
 void drawDotEye(int x, int y, int radius, uint16_t color);
+void drawBlinkablePillEye(int x, int y, int radius, uint16_t color, uint8_t blinkLevel);
 void drawEyeBar(int x, int y, int width, int height, uint16_t color);
 void drawClosedEyes(uint16_t color, int width, int height);
 void drawHeartEye(int x, int y, int size, uint16_t color);

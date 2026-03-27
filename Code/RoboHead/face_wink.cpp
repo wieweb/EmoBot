@@ -2,18 +2,45 @@
 
 #include "colors.h"
 #include "face_common.h"
+#include "face_state.h"
+
+namespace {
+
+void drawLeftEye(int x, int y, uint8_t blinkLevel) {
+  if (blinkLevel == 0) {
+    FaceCommon::drawThickLine(x - 24, y, x + 22, y, Colors::Cyan, 6);
+    return;
+  }
+
+  if (blinkLevel == 1) {
+    FaceCommon::drawThickLine(x - 20, y + 4, x + 18, y + 4, Colors::Cyan, 6);
+    return;
+  }
+
+  FaceCommon::drawEyeBar(x, y + 10, 42, 8, Colors::Cyan);
+}
+
+}  // namespace
 
 namespace FaceWink {
 
-namespace {
-void drawMouth() {
-  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, FaceCommon::kMouthY, 80, 34, Colors::Cyan, 6);
-}
-}  // namespace
-
 void drawEyes() {
-  FaceCommon::drawThickLine(FaceCommon::kLeftEyeX - 24, FaceCommon::kEyeY, FaceCommon::kLeftEyeX + 22, FaceCommon::kEyeY, Colors::Cyan, 6);
-  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY - 2, 14, Colors::Cyan);
+  const FaceState::RenderState& state = FaceState::current();
+  const int leftX = FaceCommon::kLeftEyeX + state.eyeOffsetX + state.eyeInsetX;
+  const int rightX = FaceCommon::kRightEyeX + state.eyeOffsetX - state.eyeInsetX;
+  const int eyeY = FaceCommon::kEyeY + state.eyeOffsetY;
+
+  drawLeftEye(leftX, eyeY, state.leftBlinkLevel);
+  FaceCommon::drawBlinkablePillEye(rightX, eyeY - 2, 14, Colors::Cyan, state.rightBlinkLevel);
+}
+
+void drawMouth() {
+  const FaceState::RenderState& state = FaceState::current();
+  const int width = max(56, 80 + state.mouthWidthDelta);
+  const int height = max(18, 34 + state.mouthHeightDelta);
+  const int mouthY = FaceCommon::kMouthY + state.mouthOffsetY;
+
+  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, mouthY, width, height, Colors::Cyan, 6);
 }
 
 void draw() {
@@ -24,7 +51,7 @@ void draw() {
 
 void drawBlink() {
   FaceCommon::clearEyeArea();
-  FaceCommon::drawClosedEyes(Colors::Cyan, 48, 8);
+  drawEyes();
 }
 
 }  // namespace FaceWink

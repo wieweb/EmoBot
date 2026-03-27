@@ -18,20 +18,21 @@ struct FaceEntry {
   const char* name;
   void (*draw)();
   void (*drawEyes)();
+  void (*drawMouth)();
   void (*drawBlink)();
 };
 
 const FaceEntry FACES[] = {
-  {"happy", FaceHappy::draw, FaceHappy::drawEyes, FaceHappy::drawBlink},
-  {"wink", FaceWink::draw, FaceWink::drawEyes, FaceWink::drawBlink},
-  {"sad", FaceSad::draw, FaceSad::drawEyes, FaceSad::drawBlink},
-  {"angry", FaceAngry::draw, FaceAngry::drawEyes, FaceAngry::drawBlink},
-  {"neutral", FaceNeutral::draw, FaceNeutral::drawEyes, FaceNeutral::drawBlink},
-  {"love", FaceLove::draw, FaceLove::drawEyes, FaceLove::drawBlink},
-  {"surprised", FaceSurprised::draw, FaceSurprised::drawEyes, FaceSurprised::drawBlink},
-  {"sleepy", FaceSleepy::draw, FaceSleepy::drawEyes, FaceSleepy::drawBlink},
-  {"laugh", FaceLaugh::draw, FaceLaugh::drawEyes, FaceLaugh::drawBlink},
-  {"worried", FaceWorried::draw, FaceWorried::drawEyes, FaceWorried::drawBlink},
+  {"happy", FaceHappy::draw, FaceHappy::drawEyes, FaceHappy::drawMouth, FaceHappy::drawBlink},
+  {"wink", FaceWink::draw, FaceWink::drawEyes, FaceWink::drawMouth, FaceWink::drawBlink},
+  {"sad", FaceSad::draw, FaceSad::drawEyes, FaceSad::drawMouth, FaceSad::drawBlink},
+  {"angry", FaceAngry::draw, FaceAngry::drawEyes, FaceAngry::drawMouth, FaceAngry::drawBlink},
+  {"neutral", FaceNeutral::draw, FaceNeutral::drawEyes, FaceNeutral::drawMouth, FaceNeutral::drawBlink},
+  {"love", FaceLove::draw, FaceLove::drawEyes, FaceLove::drawMouth, FaceLove::drawBlink},
+  {"surprised", FaceSurprised::draw, FaceSurprised::drawEyes, FaceSurprised::drawMouth, FaceSurprised::drawBlink},
+  {"sleepy", FaceSleepy::draw, FaceSleepy::drawEyes, FaceSleepy::drawMouth, FaceSleepy::drawBlink},
+  {"laugh", FaceLaugh::draw, FaceLaugh::drawEyes, FaceLaugh::drawMouth, FaceLaugh::drawBlink},
+  {"worried", FaceWorried::draw, FaceWorried::drawEyes, FaceWorried::drawMouth, FaceWorried::drawBlink},
 };
 
 uint8_t currentFace = 0;
@@ -49,15 +50,15 @@ void update(unsigned long now) {
 }
 
 void next() {
+  IdleAnimation::notifyInteraction(millis());
   currentFace = (currentFace + 1) % faceCount();
   drawCurrent();
-  IdleAnimation::notifyInteraction(millis());
 }
 
 void previous() {
+  IdleAnimation::notifyInteraction(millis());
   currentFace = (currentFace == 0) ? (faceCount() - 1) : (currentFace - 1);
   drawCurrent();
-  IdleAnimation::notifyInteraction(millis());
 }
 
 void drawCurrent() {
@@ -66,6 +67,10 @@ void drawCurrent() {
 
 void drawEyesCurrent() {
   FACES[currentFace].drawEyes();
+}
+
+void drawMouthCurrent() {
+  FACES[currentFace].drawMouth();
 }
 
 void drawBlinkCurrent() {
