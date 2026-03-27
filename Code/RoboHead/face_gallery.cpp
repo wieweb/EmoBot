@@ -1,6 +1,7 @@
 #include "face_gallery.h"
 
 #include "face_angry.h"
+#include "display.h"
 #include "face_happy.h"
 #include "idle_animation.h"
 #include "face_laugh.h"
@@ -63,18 +64,22 @@ void previous() {
 
 void drawCurrent() {
   FACES[currentFace].draw();
+  Display::present();
 }
 
 void drawEyesCurrent() {
   FACES[currentFace].drawEyes();
+  Display::present();
 }
 
 void drawMouthCurrent() {
   FACES[currentFace].drawMouth();
+  Display::present();
 }
 
 void drawBlinkCurrent() {
   FACES[currentFace].drawBlink();
+  Display::present();
 }
 
 const char* currentName() {

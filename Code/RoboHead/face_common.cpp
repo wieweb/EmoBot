@@ -14,7 +14,7 @@ constexpr int kMouthAreaWidth = 204;
 constexpr int kMouthAreaHeight = 84;
 
 void fillVerticalPillGlow(int x, int y, int width, int height, uint16_t color) {
-  Adafruit_ST7789& tft = Display::tft();
+  Adafruit_GFX& tft = Display::canvas();
   const int cornerRadius = width / 2;
   tft.fillRoundRect(x - width / 2, y - height / 2, width, height, cornerRadius, color);
   tft.fillRoundRect(
@@ -36,12 +36,12 @@ void clearCanvas() {
 }
 
 void clearEyeArea() {
-  Adafruit_ST7789& tft = Display::tft();
+  Adafruit_GFX& tft = Display::canvas();
   tft.fillRect(kEyeAreaX, kEyeAreaY, kEyeAreaWidth, kEyeAreaHeight, Colors::Black);
 }
 
 void clearMouthArea() {
-  Adafruit_ST7789& tft = Display::tft();
+  Adafruit_GFX& tft = Display::canvas();
   tft.fillRect(kMouthAreaX, kMouthAreaY, kMouthAreaWidth, kMouthAreaHeight, Colors::Black);
 }
 
@@ -66,7 +66,7 @@ void drawBlinkablePillEye(int x, int y, int radius, uint16_t color, uint8_t blin
 }
 
 void drawEyeBar(int x, int y, int width, int height, uint16_t color) {
-  Adafruit_ST7789& tft = Display::tft();
+  Adafruit_GFX& tft = Display::canvas();
   tft.fillRoundRect(x - width / 2, y - height / 2, width, height, height / 2, color);
 }
 
@@ -76,7 +76,7 @@ void drawClosedEyes(uint16_t color, int width, int height) {
 }
 
 void drawHeartEye(int x, int y, int size, uint16_t color) {
-  Adafruit_ST7789& tft = Display::tft();
+  Adafruit_GFX& tft = Display::canvas();
   const int lobeRadius = size / 3;
   const int offset = size / 4;
 
@@ -94,7 +94,7 @@ void drawHeartEye(int x, int y, int size, uint16_t color) {
 }
 
 void drawOpenMouth(int x, int y, int radius, uint16_t color) {
-  Adafruit_ST7789& tft = Display::tft();
+  Adafruit_GFX& tft = Display::canvas();
   tft.fillCircle(x, y, radius, color);
   tft.fillCircle(x, y, radius / 2, Colors::Black);
 }
@@ -127,7 +127,7 @@ void drawQuadraticCurve(int x0, int y0, int cx, int cy, int x1, int y1, uint16_t
 }
 
 void drawThickLine(int x0, int y0, int x1, int y1, uint16_t color, uint8_t thickness) {
-  Adafruit_ST7789& tft = Display::tft();
+  Adafruit_GFX& tft = Display::canvas();
   const int dx = x1 - x0;
   const int dy = y1 - y0;
   const int steps = max(abs(dx), abs(dy));
