@@ -1,152 +1,107 @@
-# Roboter Project
+# EmoBot
 
 ## Overview
-This project is a small, modular robot with a cute design inspired by consumer robots (similar to Cozmo). The focus is on a clean separation between hardware control and higher-level logic.
 
-The robot currently consists of:
-- A **compact movable head** with a display (face)
-- A **static body** that contains the main controller ("brain")
-- A **pan/tilt-ready architecture** for future extensions
+EmoBot is a small modular robot project centered around an expressive display-based head.
+The project is being built step by step, starting with a friendly animated face and a clean split between low-level hardware control and higher-level behavior.
 
----
+The current implementation focus is the `RoboHead` module:
 
-## System Architecture
+- ST7789 display output
+- reusable face drawing primitives
+- multiple face expressions
+- a non-blocking idle blink animation
 
-The system is built using **two ESP32 microcontrollers** with clearly separated responsibilities:
+## Current Status
 
-### 1. Brain (Main Controller)
-- Board: **ESP32-S3 DevKitC-1**
-- Location: Inside the robot body
+The head firmware already supports:
 
-#### Responsibilities:
-- High-level logic and behavior
-- Communication with sensors (future: camera, microphones)
-- Decision making (e.g. where the robot should look)
-- Sending commands to the head controller
+- multiple face modules such as happy, neutral, sad, angry, love, surprised, sleepy, laugh, wink, and worried
+- a face gallery that can switch expressions
+- larger face geometry that uses the display area more effectively
+- vertical pill-shaped eyes for open-eye expressions
+- idle blinking using randomized non-blocking timing
+- partial redraws of the eye area during blinking to reduce visible flicker
 
----
+## Architecture
 
-### 2. Head Controller (Hardware Controller)
-- Board: **ESP32-S3 Super Mini**
-- Location: In or near the head/neck
+The overall robot is designed around two ESP32-based controllers with clearly separated responsibilities.
 
-#### Responsibilities:
-- Driving the LCD display (robot face)
-- Controlling servos (head movement)
-- Executing low-level, real-time actions
-- Receiving commands from the main controller
+### Brain
 
----
+- Board: `ESP32-S3 DevKitC-1`
+- Location: robot body
+- Responsibility: high-level logic, sensors, decisions, and later AI-related behavior
 
-## Communication
+### Head Controller
 
-The two controllers communicate via:
-- **UART (serial communication)**
+- Board: `ESP32-S3 Super Mini` or a similar compact `ESP32-S3`
+- Location: head / neck area
+- Responsibility: display rendering, face animation, servo control, and time-critical hardware behavior
 
-### Concept:
-- The **Brain** sends simple commands
-- The **Head Controller** executes them
+## Communication Model
 
-#### Example commands:
+The intended communication path between both controllers is `UART`.
+
+The long-term idea is simple:
+
+- the Brain sends compact commands
+- the Head Controller executes those commands locally
+
+Example command categories:
+
 - `LOOK_LEFT`
 - `LOOK_RIGHT`
 - `TILT_UP`
 - `SHOW_FACE_HAPPY`
 
-This keeps the system modular and scalable.
+## Display Notes
 
----
+- Display type: `1.69" ST7789`
+- Physical panel size: `240x280`
+- Active firmware orientation: `280x240`
+- Interface: `SPI`
 
-## Hardware Components
+The face renderer is built around a rotated landscape layout, so UI and animation decisions should follow the `280x240` coordinate space used by the firmware.
 
-### Display (Face)
-- 1.69" IPS LCD (240x280, SPI, ST7789)
-- Connected to the **Head Controller**
-- Used to render eyes, expressions, and animations
+## Firmware Structure
 
-### Servo (Head Movement)
-- MG90S Micro Servo (metal gear)
-- Controlled by the **Head Controller**
-- Powered directly from the 5V supply (not from ESP)
+The current `Code/RoboHead` structure is intentionally modular:
 
-### Power Supply
-- 5.1V / 5A USB-C power supply
-- USB-C panel mount connector integrated into the body
+- `RoboHead.ino`: setup and loop orchestration
+- `display.*`: display initialization and access
+- `buttons.*`: button input and press handling
+- `face_common.*`: shared face drawing primitives
+- `face_*.{h,cpp}`: individual face definitions
+- `face_gallery.*`: face selection and dispatch
+- `idle_animation.*`: non-blocking idle behavior such as blinking
 
-#### Power Distribution:
-- 5V → both ESP boards
-- 5V → servo(s)
-- Common GND across all components
+## Hardware Notes
 
----
+- Servos must be powered from an external `5V` supply
+- Servos must never be powered directly from ESP GPIO pins
+- All modules must share common ground
+- USB is mainly for programming and debugging
 
-## Mechanical Design
+## Development Guidelines
 
-### Head
-- Compact, rounded design
-- LCD in the upper half (face)
-- Camera planned below the display
-- Microphone openings on left and right side
-- Internal space for display and wiring
+- Keep code and docs in English
+- Prefer small, isolated modules
+- Use non-blocking timing with `millis()` for animation behavior
+- Avoid full-screen redraws for small visual updates when a local redraw is enough
+- Extend the current structure instead of adding monolithic logic
 
-### Body
-- Simple rectangular enclosure
-- Contains:
-  - Main ESP32-S3 (Brain)
-  - Power input (USB-C panel mount)
-- Designed for future mobility (wheels/tracks)
+## Roadmap
 
-### Neck / Movement
-- Initial version: **Tilt only (1 DOF)**
-- Future: **Pan + Tilt (2 DOF)**
+1. Stable and expressive LCD face
+2. Head movement with servos
+3. UART command handling between Brain and Head Controller
+4. Sensor integration such as camera and microphones
+5. More advanced interactive and AI-assisted behavior
 
----
+## Repository Notes
 
-## Development Strategy
+- `RULES.md` contains the persistent project rules and design constraints
+- `Documentations/partslist.md` contains the current core hardware list
 
-### Phase 1
-- Static body
-- Moving head (tilt)
-- Display-based face
-- Basic command communication
-
-### Phase 2
-- Add camera and microphones
-- Implement basic tracking (face / direction)
-- Add pan movement
-
-### Phase 3
-- Add mobile base (driving)
-- Combine head movement with navigation
-
----
-
-## Key Design Decisions
-
-- Separation of concerns (Brain vs Hardware Controller)
-- External power for servos (stability)
-- Modular architecture for future upgrades
-- Compact and clean mechanical design
-
----
-
-## Future Extensions
-
-- Face tracking using camera
-- Sound localization using microphones
-- Autonomous movement
-- More expressive animations (eyes, emotions)
-- Integration with AI systems
-
----
-
-## Notes
-
-- All grounds (GND) must be connected
-- Servos must NOT be powered from ESP pins
-- ESP boards are powered via 5V (VIN / 5V pin)
-- USB is primarily used for programming/debugging
-
----
-
-This project is designed to evolve step by step from a simple animated head into a fully interactive mobile robot.
+EmoBot is intended to grow from a readable animated head into a friendly and technically clean personal robot.

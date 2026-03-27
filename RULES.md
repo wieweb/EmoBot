@@ -1,85 +1,92 @@
-# RoboterTobias Rules
+# EmoBot Rules
 
-Diese Datei hält den dauerhaften Projektkontext fest, damit zukünftige Arbeit am Projekt konsistent bleibt.
+This file captures the long-lived project context so future work stays consistent.
 
-## Projektziel
+## Project Goal
 
-`RoboterTobias` ist ein kleiner, freundlicher Roboter fuer Tobias.
-Der Fokus liegt auf einem sympathischen Charakter, modularer Technik und einer schrittweisen Entwicklung von einem animierten Kopf zu einem interaktiven Roboter.
+`EmoBot` is a small personal robot for Tobias.
+The project should grow step by step from an expressive animated head into a friendly interactive robot.
 
-## Kernidee
+The robot is not meant to be a generic tech demo.
+Personality, readability, and maintainability matter more than feature count.
 
-- Der Roboter soll freundlich, ruhig und kindgerecht wirken.
-- Das Gesicht auf dem LCD ist ein zentrales Ausdrucksmittel.
-- Mechanik, Elektronik und Software sollen modular aufgebaut werden.
-- Entscheidungen mit langfristigem Nutzen sind wichtiger als schnelle, unstrukturierte Hacks.
+## Core Direction
 
-## Systemarchitektur
+- The robot should feel friendly, calm, and child-appropriate.
+- The display face is a primary communication channel, not a decorative extra.
+- Hardware, firmware, and higher-level behavior should stay modular.
+- Long-term structure is more important than quick hacks.
 
-Das Projekt ist auf zwei Controller ausgelegt:
+## System Architecture
+
+The project is designed around two controllers:
 
 1. `Brain`
-   High-Level-Logik, Sensorik, Entscheidungen, spaetere AI-Anbindung
+   High-level behavior, sensors, decisions, and future AI integration.
 2. `Head Controller`
-   Display, Gesichtsanimationen, Servos, zeitkritische Hardwaresteuerung
+   Display rendering, face animation, servos, and time-critical hardware control.
 
-Kommunikation zwischen beiden Controllern erfolgt ueber `UART`.
+Communication between both controllers should happen over `UART`.
 
-## Hardware-Annahmen
+## Hardware Assumptions
 
-- Main Controller: `ESP32-S3 DevKitC-1`
-- Head Controller: `ESP32-S3 Super Mini` oder aehnlich kompakte ESP32-S3-Platine
-- Display: `1.69" ST7789`, `240x280`, `SPI`
-- Servos werden extern mit `5V` versorgt, niemals direkt aus GPIO-Pins
-- Alle Komponenten muessen eine gemeinsame `GND`-Verbindung haben
+- Main controller: `ESP32-S3 DevKitC-1`
+- Head controller: `ESP32-S3 Super Mini` or another compact `ESP32-S3` board
+- Display: `1.69" ST7789`, physical panel `240x280`, used in firmware as a rotated `280x240` screen
+- Servos must use an external `5V` supply and must never be powered directly from GPIO pins
+- All components must share a common `GND`
 
-## Aktueller Fokus
+## Current Focus
 
-Der aktuelle Schwerpunkt liegt auf dem Kopfmodul:
+The current work is focused on the head module:
 
-- Gesicht auf LCD anzeigen
-- Idle-Animationen fuer Augen und Mund
-- spaeter verschiedene Emotions- und Reaktionszustande
-- Vorbereitung fuer Servo- und Kommandoansteuerung
+- Render expressive faces on the LCD
+- Build non-blocking idle animations
+- Start with subtle eye behavior such as blinking
+- Prepare for future servo control and command handling
 
-## Code-Regeln
+## Code Rules
 
-- Die Codebasis soll modular bleiben.
-- Code-Sprache ist english
-- `RoboHead.ino` soll nur die Steuerung und Initialisierung enthalten.
-- Display-bezogene Logik gehoert in `display.*`.
-- Gesichtsanimationen gehoeren in eigene Module wie `face_idle.*`, spaeter z. B. `face_happy.*`.
-- Hardware-Konstanten gehoeren in zentrale Header wie `pins.h` und `colors.h`.
-- Keine Pin- oder Farbwerte mehrfach hart im Code verteilen.
-- Neue Features sollen bestehende Struktur erweitern, nicht wieder zu einer grossen Monolith-Datei fuehren.
+- Keep the codebase modular.
+- Code and documentation language should be English.
+- `RoboHead.ino` should contain only high-level setup and loop orchestration.
+- Display-specific logic belongs in `display.*`.
+- Shared face drawing primitives belong in `face_common.*`.
+- Each face or emotion belongs in its own module such as `face_happy.*`, `face_angry.*`, or `face_worried.*`.
+- Gallery and animation coordination belong in dedicated modules such as `face_gallery.*` and `idle_animation.*`.
+- Hardware constants belong in central headers such as `pins.h`, `colors.h`, and similar config files.
+- Do not duplicate pin values, colors, or timing constants across multiple files without a reason.
+- New features should extend the existing structure instead of collapsing logic back into one large file.
 
-## Verhaltensregeln fuer das Gesicht
+## Face and Animation Rules
 
-- Animationen sollen weich, lesbar und sympathisch wirken.
-- Bewegungen eher ruhig als hektisch.
-- Idle-Verhalten soll lebendig wirken, aber nicht nervoes.
-- Gesichtsausdruecke sollen technisch einfach, aber emotional klar sein.
+- Expressions should be emotionally clear, technically simple, and easy to read at a glance.
+- Motion should feel calm and deliberate, not hyperactive.
+- Idle behavior should make the robot feel alive without becoming distracting.
+- Avoid full-screen redraws for small face changes when a local redraw is sufficient.
+- Use non-blocking timing based on `millis()` for animations and state changes.
+- Preserve facial readability during animation; blinking should not disturb the mouth or other unaffected regions.
 
-## Entwicklungsregeln
+## Development Rules
 
-- Kleine, klar getrennte Schritte bevorzugen.
-- Bestehende Hardware-Annahmen nicht stillschweigend aendern.
-- Vor neuen Pins, Servos oder Displays zuerst zentrale Konfigurationsdateien anpassen.
-- Bei neuen Gesichtsmodi immer pruefen, ob sie als eigenes Modul statt als Sonderfall in bestehendem Code umgesetzt werden sollten.
-- Timing fuer Display und Animationen moeglichst nicht mit blockierendem `delay()` loesen.
+- Prefer small, clearly separated iterations.
+- Do not silently change core hardware assumptions.
+- When adding pins, displays, servos, or timing-critical behavior, update central configuration files first.
+- When adding a new face mode, first decide whether it deserves its own module instead of becoming a special case in another file.
+- Avoid `delay()` for animation timing or controller flow unless there is a very explicit reason.
 
-## Langfristige Richtung
+## Long-Term Growth Path
 
-Das Projekt soll in dieser Reihenfolge wachsen:
+The project should evolve roughly in this order:
 
-1. Stabiles LCD-Gesicht
-2. Kopfbewegung mit Servos
-3. Kommandos zwischen Brain und Head Controller
-4. Sensorik wie Kamera und Mikrofone
-5. Interaktives Verhalten und spaetere AI-Funktionen
+1. Stable LCD face with expressive animations
+2. Head movement with servos
+3. Command communication between Brain and Head Controller
+4. Sensors such as camera and microphones
+5. Interactive behavior and later AI-driven features
 
-## Bei zukuenftigen Aenderungen immer beachten
+## Always Keep In Mind
 
-- Das Projekt ist ein persoenlicher Roboter fuer Tobias, kein generisches Demo-Projekt.
-- Freundlicher Charakter und Wartbarkeit sind wichtiger als moeglichst komplexe Features.
-- Neue Struktur soll auf dem vorhandenen modularen Aufbau aufsetzen.
+- This is Tobias's personal robot.
+- Friendly character and maintainability are more important than technical complexity for its own sake.
+- New architecture should build on the current modular structure, not fight it.
