@@ -1,6 +1,7 @@
 #include "buttons.h"
 #include "display.h"
 #include "face_gallery.h"
+#include "idle_animation.h"
 
 void setup() {
   Serial.begin(115200);
@@ -8,6 +9,7 @@ void setup() {
   Display::begin();
   Buttons::begin();
   FaceGallery::begin();
+  IdleAnimation::begin(millis());
 }
 
 void loop() {
@@ -22,4 +24,6 @@ void loop() {
   if (Buttons::consumePreviousPressed()) {
     FaceGallery::previous();
   }
+
+  FaceGallery::update(now);
 }

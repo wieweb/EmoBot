@@ -45,7 +45,8 @@ Der aktuelle Schwerpunkt liegt auf dem Kopfmodul:
 ## Code-Regeln
 
 - Die Codebasis soll modular bleiben.
-- `Emobot.ino` soll nur die Steuerung und Initialisierung enthalten.
+- Code-Sprache ist english
+- `RoboHead.ino` soll nur die Steuerung und Initialisierung enthalten.
 - Display-bezogene Logik gehoert in `display.*`.
 - Gesichtsanimationen gehoeren in eigene Module wie `face_idle.*`, spaeter z. B. `face_happy.*`.
 - Hardware-Konstanten gehoeren in zentrale Header wie `pins.h` und `colors.h`.

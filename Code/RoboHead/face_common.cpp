@@ -4,6 +4,11 @@
 #include "display.h"
 
 namespace {
+constexpr int kEyeAreaX = 18;
+constexpr int kEyeAreaY = 24;
+constexpr int kEyeAreaWidth = 244;
+constexpr int kEyeAreaHeight = 112;
+
 void fillVerticalPillGlow(int x, int y, int width, int height, uint16_t color) {
   Adafruit_ST7789& tft = Display::tft();
   const int cornerRadius = width / 2;
@@ -26,6 +31,11 @@ void clearCanvas() {
   Display::clear(Colors::Black);
 }
 
+void clearEyeArea() {
+  Adafruit_ST7789& tft = Display::tft();
+  tft.fillRect(kEyeAreaX, kEyeAreaY, kEyeAreaWidth, kEyeAreaHeight, Colors::Black);
+}
+
 void drawDotEye(int x, int y, int radius, uint16_t color) {
   const int width = max(16, radius + 10);
   const int height = max(40, (radius * 4) - 2);
@@ -35,6 +45,11 @@ void drawDotEye(int x, int y, int radius, uint16_t color) {
 void drawEyeBar(int x, int y, int width, int height, uint16_t color) {
   Adafruit_ST7789& tft = Display::tft();
   tft.fillRoundRect(x - width / 2, y - height / 2, width, height, height / 2, color);
+}
+
+void drawClosedEyes(uint16_t color, int width, int height) {
+  drawEyeBar(kLeftEyeX, kEyeY, width, height, color);
+  drawEyeBar(kRightEyeX, kEyeY, width, height, color);
 }
 
 void drawHeartEye(int x, int y, int size, uint16_t color) {

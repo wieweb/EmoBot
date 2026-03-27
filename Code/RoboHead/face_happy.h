@@ -2,4 +2,6 @@
 
 namespace FaceHappy {
 void draw();
+void drawEyes();
+void drawBlink();
 }

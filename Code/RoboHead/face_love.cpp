@@ -5,11 +5,26 @@
 
 namespace FaceLove {
 
-void draw() {
-  FaceCommon::clearCanvas();
+namespace {
+void drawMouth() {
+  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, FaceCommon::kMouthY, 78, 30, Colors::Pink, 6);
+}
+}  // namespace
+
+void drawEyes() {
   FaceCommon::drawHeartEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY, 38, Colors::Pink);
   FaceCommon::drawHeartEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY, 38, Colors::Pink);
-  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, FaceCommon::kMouthY, 78, 30, Colors::Pink, 6);
+}
+
+void draw() {
+  FaceCommon::clearCanvas();
+  drawEyes();
+  drawMouth();
+}
+
+void drawBlink() {
+  FaceCommon::clearEyeArea();
+  FaceCommon::drawClosedEyes(Colors::Pink, 50, 8);
 }
 
 }  // namespace FaceLove
