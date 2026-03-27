@@ -4,10 +4,18 @@
 #include "display.h"
 
 namespace {
-void fillCircleGlow(int x, int y, int radius, uint16_t color) {
+void fillVerticalPillGlow(int x, int y, int width, int height, uint16_t color) {
   Adafruit_ST7789& tft = Display::tft();
-  tft.fillCircle(x, y, radius, color);
-  tft.fillCircle(x - radius / 3, y - radius / 3, radius / 3, Colors::White);
+  const int cornerRadius = width / 2;
+  tft.fillRoundRect(x - width / 2, y - height / 2, width, height, cornerRadius, color);
+  tft.fillRoundRect(
+    x - width / 2 + 2,
+    y - height / 2 + 3,
+    max(2, width / 3),
+    max(4, height / 3),
+    max(1, width / 6),
+    Colors::White
+  );
 }
 
 }  // namespace
@@ -19,7 +27,9 @@ void clearCanvas() {
 }
 
 void drawDotEye(int x, int y, int radius, uint16_t color) {
-  fillCircleGlow(x, y, radius, color);
+  const int width = max(16, radius + 10);
+  const int height = max(40, (radius * 4) - 2);
+  fillVerticalPillGlow(x, y, width, height, color);
 }
 
 void drawEyeBar(int x, int y, int width, int height, uint16_t color) {

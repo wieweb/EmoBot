@@ -7,9 +7,9 @@ namespace FaceAngry {
 
 void draw() {
   FaceCommon::clearCanvas();
-  FaceCommon::drawThickLine(FaceCommon::kLeftEyeX - 12, FaceCommon::kEyeY - 10, FaceCommon::kLeftEyeX + 10, FaceCommon::kEyeY - 2, Colors::Pink, 6);
-  FaceCommon::drawThickLine(FaceCommon::kRightEyeX - 10, FaceCommon::kEyeY - 2, FaceCommon::kRightEyeX + 12, FaceCommon::kEyeY - 10, Colors::Pink, 6);
-  FaceCommon::drawFrown(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 10, 44, 22, Colors::Pink, 4);
+  FaceCommon::drawThickLine(FaceCommon::kLeftEyeX - 24, FaceCommon::kEyeY - 14, FaceCommon::kLeftEyeX + 22, FaceCommon::kEyeY - 1, Colors::Pink, 8);
+  FaceCommon::drawThickLine(FaceCommon::kRightEyeX - 22, FaceCommon::kEyeY - 1, FaceCommon::kRightEyeX + 24, FaceCommon::kEyeY - 14, Colors::Pink, 8);
+  FaceCommon::drawFrown(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 10, 92, 42, Colors::Pink, 6);
 }
 
 }  // namespace FaceAngry

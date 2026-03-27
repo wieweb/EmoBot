@@ -7,9 +7,9 @@ namespace FaceLaugh {
 
 void draw() {
   FaceCommon::clearCanvas();
-  FaceCommon::drawQuadraticCurve(FaceCommon::kLeftEyeX - 12, FaceCommon::kEyeY + 2, FaceCommon::kLeftEyeX, FaceCommon::kEyeY - 12, FaceCommon::kLeftEyeX + 12, FaceCommon::kEyeY + 2, Colors::Cyan, 4);
-  FaceCommon::drawQuadraticCurve(FaceCommon::kRightEyeX - 12, FaceCommon::kEyeY + 2, FaceCommon::kRightEyeX, FaceCommon::kEyeY - 12, FaceCommon::kRightEyeX + 12, FaceCommon::kEyeY + 2, Colors::Cyan, 4);
-  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, FaceCommon::kMouthY, 44, 18, Colors::Cyan, 4);
+  FaceCommon::drawQuadraticCurve(FaceCommon::kLeftEyeX - 22, FaceCommon::kEyeY + 6, FaceCommon::kLeftEyeX, FaceCommon::kEyeY - 20, FaceCommon::kLeftEyeX + 22, FaceCommon::kEyeY + 6, Colors::Cyan, 6);
+  FaceCommon::drawQuadraticCurve(FaceCommon::kRightEyeX - 22, FaceCommon::kEyeY + 6, FaceCommon::kRightEyeX, FaceCommon::kEyeY - 20, FaceCommon::kRightEyeX + 22, FaceCommon::kEyeY + 6, Colors::Cyan, 6);
+  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, FaceCommon::kMouthY, 92, 38, Colors::Cyan, 6);
 }
 
 }  // namespace FaceLaugh

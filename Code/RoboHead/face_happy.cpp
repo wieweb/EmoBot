@@ -7,9 +7,9 @@ namespace FaceHappy {
 
 void draw() {
   FaceCommon::clearCanvas();
-  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY, 8, Colors::Cyan);
-  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY, 8, Colors::Cyan);
-  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, FaceCommon::kMouthY, 42, 20, Colors::Cyan, 4);
+  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY, 14, Colors::Cyan);
+  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY, 14, Colors::Cyan);
+  FaceCommon::drawSmile(FaceCommon::kMouthCenterX, FaceCommon::kMouthY, 86, 38, Colors::Cyan, 6);
 }
 
 }  // namespace FaceHappy

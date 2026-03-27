@@ -7,8 +7,8 @@ namespace FaceNeutral {
 
 void draw() {
   FaceCommon::clearCanvas();
-  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY, 8, Colors::Cyan);
-  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY, 8, Colors::Cyan);
+  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY, 14, Colors::Cyan);
+  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY, 14, Colors::Cyan);
 }
 
 }  // namespace FaceNeutral

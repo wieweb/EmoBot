@@ -7,9 +7,9 @@ namespace FaceSad {
 
 void draw() {
   FaceCommon::clearCanvas();
-  FaceCommon::drawQuadraticCurve(FaceCommon::kLeftEyeX - 10, FaceCommon::kEyeY - 8, FaceCommon::kLeftEyeX - 2, FaceCommon::kEyeY - 18, FaceCommon::kLeftEyeX + 8, FaceCommon::kEyeY - 2, Colors::Cyan, 4);
-  FaceCommon::drawQuadraticCurve(FaceCommon::kRightEyeX - 8, FaceCommon::kEyeY - 2, FaceCommon::kRightEyeX + 2, FaceCommon::kEyeY - 18, FaceCommon::kRightEyeX + 10, FaceCommon::kEyeY - 8, Colors::Cyan, 4);
-  FaceCommon::drawFrown(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 6, 40, 18, Colors::Cyan, 4);
+  FaceCommon::drawQuadraticCurve(FaceCommon::kLeftEyeX - 18, FaceCommon::kEyeY - 12, FaceCommon::kLeftEyeX - 2, FaceCommon::kEyeY - 30, FaceCommon::kLeftEyeX + 16, FaceCommon::kEyeY - 2, Colors::Cyan, 6);
+  FaceCommon::drawQuadraticCurve(FaceCommon::kRightEyeX - 16, FaceCommon::kEyeY - 2, FaceCommon::kRightEyeX + 2, FaceCommon::kEyeY - 30, FaceCommon::kRightEyeX + 18, FaceCommon::kEyeY - 12, Colors::Cyan, 6);
+  FaceCommon::drawFrown(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 10, 84, 36, Colors::Cyan, 6);
 }
 
 }  // namespace FaceSad

@@ -7,11 +7,11 @@ namespace FaceWorried {
 
 void draw() {
   FaceCommon::clearCanvas();
-  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY, 8, Colors::Cyan);
-  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY, 8, Colors::Cyan);
-  FaceCommon::drawQuadraticCurve(FaceCommon::kLeftEyeX - 12, FaceCommon::kEyeY - 16, FaceCommon::kLeftEyeX - 2, FaceCommon::kEyeY - 22, FaceCommon::kLeftEyeX + 8, FaceCommon::kEyeY - 8, Colors::Cyan, 3);
-  FaceCommon::drawQuadraticCurve(FaceCommon::kRightEyeX - 8, FaceCommon::kEyeY - 8, FaceCommon::kRightEyeX + 2, FaceCommon::kEyeY - 22, FaceCommon::kRightEyeX + 12, FaceCommon::kEyeY - 16, Colors::Cyan, 3);
-  FaceCommon::drawFrown(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 4, 28, 12, Colors::Cyan, 3);
+  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY, 13, Colors::Cyan);
+  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY, 13, Colors::Cyan);
+  FaceCommon::drawQuadraticCurve(FaceCommon::kLeftEyeX - 20, FaceCommon::kEyeY - 20, FaceCommon::kLeftEyeX - 2, FaceCommon::kEyeY - 34, FaceCommon::kLeftEyeX + 16, FaceCommon::kEyeY - 10, Colors::Cyan, 5);
+  FaceCommon::drawQuadraticCurve(FaceCommon::kRightEyeX - 16, FaceCommon::kEyeY - 10, FaceCommon::kRightEyeX + 2, FaceCommon::kEyeY - 34, FaceCommon::kRightEyeX + 20, FaceCommon::kEyeY - 20, Colors::Cyan, 5);
+  FaceCommon::drawFrown(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 4, 60, 26, Colors::Cyan, 5);
 }
 
 }  // namespace FaceWorried

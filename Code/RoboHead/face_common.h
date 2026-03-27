@@ -4,11 +4,11 @@
 
 namespace FaceCommon {
 
-constexpr int kEyeY = 96;
-constexpr int kLeftEyeX = 98;
-constexpr int kRightEyeX = 182;
+constexpr int kEyeY = 86;
+constexpr int kLeftEyeX = 72;
+constexpr int kRightEyeX = 208;
 constexpr int kMouthCenterX = 140;
-constexpr int kMouthY = 154;
+constexpr int kMouthY = 182;
 
 void clearCanvas();
 void drawDotEye(int x, int y, int radius, uint16_t color);

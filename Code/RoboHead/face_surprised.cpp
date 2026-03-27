@@ -7,9 +7,9 @@ namespace FaceSurprised {
 
 void draw() {
   FaceCommon::clearCanvas();
-  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY - 2, 8, Colors::Cyan);
-  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY - 2, 8, Colors::Cyan);
-  FaceCommon::drawOpenMouth(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 4, 10, Colors::Cyan);
+  FaceCommon::drawDotEye(FaceCommon::kLeftEyeX, FaceCommon::kEyeY - 2, 15, Colors::Cyan);
+  FaceCommon::drawDotEye(FaceCommon::kRightEyeX, FaceCommon::kEyeY - 2, 15, Colors::Cyan);
+  FaceCommon::drawOpenMouth(FaceCommon::kMouthCenterX, FaceCommon::kMouthY + 2, 22, Colors::Cyan);
 }
 
 }  // namespace FaceSurprised
