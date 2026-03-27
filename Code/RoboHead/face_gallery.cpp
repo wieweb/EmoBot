@@ -12,6 +12,7 @@
 #include "face_surprised.h"
 #include "face_wink.h"
 #include "face_worried.h"
+#include <string.h>
 
 namespace {
 
@@ -60,6 +61,31 @@ void previous() {
   IdleAnimation::notifyInteraction(millis());
   currentFace = (currentFace == 0) ? (faceCount() - 1) : (currentFace - 1);
   drawCurrent();
+}
+
+bool setByIndex(uint8_t index) {
+  if (index >= faceCount()) {
+    return false;
+  }
+
+  IdleAnimation::notifyInteraction(millis());
+  currentFace = index;
+  drawCurrent();
+  return true;
+}
+
+bool setByName(const char* name) {
+  if (name == nullptr || name[0] == '\0') {
+    return false;
+  }
+
+  for (uint8_t i = 0; i < faceCount(); ++i) {
+    if (strcmp(FACES[i].name, name) == 0) {
+      return setByIndex(i);
+    }
+  }
+
+  return false;
 }
 
 void drawCurrent() {

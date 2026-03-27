@@ -42,8 +42,9 @@ The current work is focused on the head module:
 
 - Render expressive faces on the LCD
 - Build non-blocking idle animations
-- Use subtle eye behavior such as blinking, gaze shifts, and side glances
+- Use subtle eye behavior such as blinking, gaze shifts, side glances, and short saccades
 - Add small mouth and expression variations that support the current face instead of overpowering it
+- Support external control from a second controller over UART with a clean command interface
 - Prepare for future servo control and command handling
 
 ## Code Rules
@@ -52,7 +53,9 @@ The current work is focused on the head module:
 - Code and documentation language should be English.
 - `RoboHead.ino` should contain only high-level setup and loop orchestration.
 - Display-specific logic belongs in `display.*`.
+- UART command parsing belongs in a dedicated module such as `command_interface.*`.
 - Shared face drawing primitives belong in `face_common.*`.
+- Shared transient render state belongs in `face_state.*`.
 - Each face or emotion belongs in its own module such as `face_happy.*`, `face_angry.*`, or `face_worried.*`.
 - Gallery and animation coordination belong in dedicated modules such as `face_gallery.*` and `idle_animation.*`.
 - Hardware constants belong in central headers such as `pins.h`, `colors.h`, and similar config files.
@@ -64,10 +67,13 @@ The current work is focused on the head module:
 - Expressions should be emotionally clear, technically simple, and easy to read at a glance.
 - Motion should feel calm and deliberate, not hyperactive.
 - Idle behavior should make the robot feel alive without becoming distracting.
-- Avoid full-screen redraws for small face changes when a local redraw is sufficient.
+- Render into the fullscreen framebuffer first and present only completed frames to the LCD.
+- Keep local clear helpers such as eye and mouth region clears even with a fullscreen framebuffer, because partial expression redraws still need to remove stale pixels inside the buffer.
 - Use non-blocking timing based on `millis()` for animations and state changes.
 - Preserve facial readability during animation; blinking should not disturb the mouth or other unaffected regions.
 - Side looks should feel intentional: eyes may shift together, eye spacing may tighten slightly, and the mouth may simplify a bit during the look.
+- Saccades should stay brief and rare enough to feel alive, not nervous.
+- Attention reactions should feel deliberate and should be reusable from both local input and external commands.
 - Shared render state should drive transient expression changes such as gaze offset, blink stage, and mouth adjustment.
 
 ## Development Rules

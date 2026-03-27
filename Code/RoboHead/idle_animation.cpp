@@ -7,12 +7,19 @@
 namespace {
 
 constexpr unsigned long kEyeStepMs = 45;
+constexpr unsigned long kSaccadeEyeStepMs = 14;
 constexpr unsigned long kMoodMinMs = 9000;
 constexpr unsigned long kMoodMaxMs = 18000;
 constexpr unsigned long kMicroMinMs = 3200;
 constexpr unsigned long kMicroMaxMs = 7600;
 constexpr unsigned long kMicroDurationMinMs = 1200;
 constexpr unsigned long kMicroDurationMaxMs = 2600;
+constexpr unsigned long kSaccadeMinMs = 1700;
+constexpr unsigned long kSaccadeMaxMs = 4200;
+constexpr unsigned long kSaccadeHoldMinMs = 45;
+constexpr unsigned long kSaccadeHoldMaxMs = 95;
+constexpr unsigned long kAttentionDurationMs = 900;
+constexpr unsigned long kAttentionBlinkDelayMs = 70;
 
 enum class MicroExpression : uint8_t {
   None,
@@ -35,6 +42,9 @@ FaceState::Mood currentMood = FaceState::Mood::Calm;
 MicroExpression currentMicro = MicroExpression::None;
 
 bool blinkSequenceActive = false;
+bool saccadeActive = false;
+bool attentionActive = false;
+bool attentionBlinkQueued = false;
 unsigned long nextBlinkFrameAt = 0;
 unsigned long nextBlinkAt = 0;
 unsigned long nextMoodChangeAt = 0;
@@ -42,12 +52,19 @@ unsigned long nextGazeAt = 0;
 unsigned long nextEyeStepAt = 0;
 unsigned long nextMicroAt = 0;
 unsigned long microEndsAt = 0;
+unsigned long nextSaccadeAt = 0;
+unsigned long saccadeEndsAt = 0;
+unsigned long attentionEndsAt = 0;
+unsigned long attentionBlinkAt = 0;
 
 int eyeCurrentX = 0;
 int eyeCurrentY = 0;
 int eyeTargetX = 0;
 int eyeTargetY = 0;
 int eyeInsetCurrent = 0;
+int saccadeTargetX = 0;
+int saccadeTargetY = 0;
+int8_t attentionDirection = 0;
 
 long randomRange(long minValue, long maxValue) {
   return random(minValue, maxValue + 1);
@@ -61,6 +78,24 @@ void redrawEyes() {
 void redrawMouth() {
   FaceCommon::clearMouthArea();
   FaceGallery::drawMouthCurrent();
+}
+
+void scheduleNextSaccade(unsigned long now) {
+  unsigned long minDelay = kSaccadeMinMs;
+  unsigned long maxDelay = kSaccadeMaxMs;
+
+  if (currentMood == FaceState::Mood::Curious) {
+    minDelay = 900;
+    maxDelay = 2200;
+  } else if (currentMood == FaceState::Mood::Sleepy) {
+    minDelay = 2800;
+    maxDelay = 5200;
+  } else if (currentMood == FaceState::Mood::Cheerful) {
+    minDelay = 1300;
+    maxDelay = 2600;
+  }
+
+  nextSaccadeAt = now + static_cast<unsigned long>(randomRange(minDelay, maxDelay));
 }
 
 void scheduleMoodChange(unsigned long now) {
@@ -110,6 +145,29 @@ void scheduleNextGaze(unsigned long now) {
 void applyMood(FaceState::Mood mood) {
   currentMood = mood;
   FaceState::setMood(mood);
+}
+
+void chooseSaccadeTarget() {
+  int rangeXMin = 4;
+  int rangeXMax = 7;
+  int rangeYMin = -2;
+  int rangeYMax = 2;
+
+  if (currentMood == FaceState::Mood::Curious) {
+    rangeXMin = 6;
+    rangeXMax = 10;
+    rangeYMin = -2;
+    rangeYMax = 1;
+  } else if (currentMood == FaceState::Mood::Sleepy) {
+    rangeXMin = 3;
+    rangeXMax = 5;
+    rangeYMin = -1;
+    rangeYMax = 2;
+  }
+
+  const int direction = (randomRange(0, 1) == 0) ? -1 : 1;
+  saccadeTargetX = direction * static_cast<int>(randomRange(rangeXMin, rangeXMax));
+  saccadeTargetY = static_cast<int>(randomRange(rangeYMin, rangeYMax));
 }
 
 FaceState::Mood randomMood() {
@@ -182,6 +240,12 @@ void chooseGazeTarget() {
 
   eyeTargetX = static_cast<int>(randomRange(-rangeX, rangeX));
   eyeTargetY = static_cast<int>(randomRange(-rangeY, rangeY));
+}
+
+void startSaccade(unsigned long now) {
+  chooseSaccadeTarget();
+  saccadeActive = true;
+  saccadeEndsAt = now + static_cast<unsigned long>(randomRange(kSaccadeHoldMinMs, kSaccadeHoldMaxMs));
 }
 
 int stepToward(int current, int target) {
@@ -265,9 +329,26 @@ void composeMouthAdjustments(unsigned long now, int& offsetY, int& widthDelta, i
   if (sidewaysLook >= 5) {
     heightDelta -= 1;
   }
+
+  if (attentionActive) {
+    widthDelta -= 4;
+    heightDelta += 1;
+  }
 }
 
 void composeEyeTarget(int& targetX, int& targetY) {
+  if (attentionActive) {
+    targetX = attentionDirection * 7;
+    targetY = -2;
+    return;
+  }
+
+  if (saccadeActive) {
+    targetX = saccadeTargetX;
+    targetY = saccadeTargetY;
+    return;
+  }
+
   targetX = eyeTargetX;
   targetY = eyeTargetY;
 
@@ -375,6 +456,11 @@ void startBlinkSequence(unsigned long now) {
   nextBlinkFrameAt = now;
 }
 
+bool isBlinkNeutral() {
+  const FaceState::RenderState& state = FaceState::current();
+  return state.leftBlinkLevel == 0 && state.rightBlinkLevel == 0;
+}
+
 void updateBlink(unsigned long now) {
   if (!blinkSequenceActive) {
     if (now >= nextBlinkAt) {
@@ -400,12 +486,53 @@ void updateBlink(unsigned long now) {
   nextBlinkFrameAt = now + frame.durationMs;
 }
 
+void updateAttention(unsigned long now) {
+  if (!attentionActive) {
+    return;
+  }
+
+  if (attentionBlinkQueued && now >= attentionBlinkAt && !blinkSequenceActive && isBlinkNeutral()) {
+    attentionBlinkQueued = false;
+    startBlinkSequence(now);
+  }
+
+  if (now < attentionEndsAt) {
+    return;
+  }
+
+  attentionActive = false;
+  attentionDirection = 0;
+  attentionBlinkQueued = false;
+  scheduleNextGaze(now);
+  scheduleNextSaccade(now);
+}
+
+void updateSaccade(unsigned long now) {
+  if (attentionActive || blinkSequenceActive) {
+    return;
+  }
+
+  if (saccadeActive) {
+    if (now >= saccadeEndsAt && eyeCurrentX == saccadeTargetX && eyeCurrentY == saccadeTargetY) {
+      saccadeActive = false;
+      scheduleNextSaccade(now);
+      scheduleNextGaze(now);
+    }
+    return;
+  }
+
+  if (now >= nextSaccadeAt) {
+    startSaccade(now);
+  }
+}
+
 void updateMoodAndMicro(unsigned long now) {
   if (now >= nextMoodChangeAt) {
     applyMood(randomMood());
     scheduleMoodChange(now);
     scheduleNextBlink(now);
     scheduleNextGaze(now);
+    scheduleNextSaccade(now);
   }
 
   if (currentMicro != MicroExpression::None && now >= microEndsAt) {
@@ -437,7 +564,7 @@ void updateGaze(unsigned long now) {
   const int nextY = stepToward(eyeCurrentY, composedTargetY);
   const int targetInset = min(8, abs(composedTargetX));
   const int nextInset = stepToward(eyeInsetCurrent, targetInset);
-  nextEyeStepAt = now + kEyeStepMs;
+  nextEyeStepAt = now + ((saccadeActive || attentionActive) ? kSaccadeEyeStepMs : kEyeStepMs);
 
   if (nextX == eyeCurrentX && nextY == eyeCurrentY && nextInset == eyeInsetCurrent) {
     return;
@@ -494,6 +621,7 @@ void begin(unsigned long now) {
   scheduleMicroExpression(now);
   scheduleNextBlink(now);
   scheduleNextGaze(now);
+  scheduleNextSaccade(now);
   FaceState::setEyeOffset(0, 0);
   FaceState::setEyeInset(0);
   FaceState::setBlinkLevels(0, 0);
@@ -501,8 +629,10 @@ void begin(unsigned long now) {
 }
 
 void update(unsigned long now) {
+  updateAttention(now);
   updateMoodAndMicro(now);
   updateBlink(now);
+  updateSaccade(now);
   updateGaze(now);
   updateMouth(now);
 }
@@ -511,6 +641,7 @@ void notifyInteraction(unsigned long now) {
   blinkSequenceActive = false;
   blinkFrameCount = 0;
   blinkFrameIndex = 0;
+  saccadeActive = false;
   currentMicro = MicroExpression::None;
   microEndsAt = 0;
   scheduleMicroExpression(now);
@@ -518,6 +649,23 @@ void notifyInteraction(unsigned long now) {
   FaceState::setEyeInset(eyeInsetCurrent);
   scheduleNextBlink(now);
   scheduleNextGaze(now);
+  scheduleNextSaccade(now);
+}
+
+void triggerAttention(unsigned long now, int8_t direction) {
+  notifyInteraction(now);
+  attentionActive = true;
+  attentionDirection = (direction < 0) ? -1 : ((direction > 0) ? 1 : 0);
+  attentionEndsAt = now + kAttentionDurationMs;
+  attentionBlinkQueued = true;
+  attentionBlinkAt = now + kAttentionBlinkDelayMs;
+}
+
+void triggerBlink(unsigned long now) {
+  notifyInteraction(now);
+  if (!blinkSequenceActive) {
+    startBlinkSequence(now);
+  }
 }
 
 }  // namespace IdleAnimation

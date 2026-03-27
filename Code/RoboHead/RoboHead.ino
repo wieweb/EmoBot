@@ -1,4 +1,5 @@
 #include "buttons.h"
+#include "command_interface.h"
 #include "display.h"
 #include "face_gallery.h"
 #include "idle_animation.h"
@@ -8,6 +9,7 @@ void setup() {
 
   Display::begin();
   Buttons::begin();
+  CommandInterface::begin();
   FaceGallery::begin();
   IdleAnimation::begin(millis());
 }
@@ -16,13 +18,16 @@ void loop() {
   const unsigned long now = millis();
 
   Buttons::update(now);
+  CommandInterface::update(now);
 
   if (Buttons::consumeNextPressed()) {
     FaceGallery::next();
+    IdleAnimation::triggerAttention(now, 1);
   }
 
   if (Buttons::consumePreviousPressed()) {
     FaceGallery::previous();
+    IdleAnimation::triggerAttention(now, -1);
   }
 
   FaceGallery::update(now);
